@@ -1,13 +1,34 @@
+@import url("https://cdn.jsdelivr.net/npm/uikit@3.2.7/dist/css/uikit.min.css");
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+@import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Raleway', sans-serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.site-font {
+  font-family: 'Raleway', sans-serif;
+}
+
+#root-component {
+  min-height: 100vh;
+}
+
+#header .logo {
+  height: 50px;
+}
+
+#footer .logo {
+  height: 80px;
+}
+
+#viewing .uk-card-body {
+  min-height: 200px;
+}
+
+textarea {
+  resize: none;
 }
