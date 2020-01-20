@@ -1,5 +1,8 @@
+import * as moment from 'moment';
+
 import { initialUsersState } from "../states/users.state";
 import { UserActions } from "../action-creators/users.action-creators";
+import { dateFormat } from '../../constants';
 
 export default function usersReducer(state = initialUsersState, action) {
     switch (action.type) {
@@ -38,7 +41,8 @@ export default function usersReducer(state = initialUsersState, action) {
                     if (user.id === action.user.id) {
                         return {
                             ...user,
-                            ...action.payload
+                            ...action.payload,
+                            updated_at: moment().format(dateFormat)
                         };
                     }
 

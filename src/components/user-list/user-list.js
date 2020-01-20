@@ -108,7 +108,7 @@ class UserList extends Component {
                                     <p className="uk-text-muted uk-margin-remove-top">{moment(selectedUser.created_at).format(dateFormat)}</p>
                                     
                                     <p className="uk-text-bold uk-margin-remove-bottom">Updated At:</p>
-                                    <p className="uk-text-muted uk-margin-remove-top">{moment(selectedUser.updated_At).format(dateFormat)}</p>
+                                    <p className="uk-text-muted uk-margin-remove-top">{moment(selectedUser.updated_at).format(dateFormat)}</p>
 
                                     <Link to="/user" className="uk-button uk-button-secondary uk-margin">Edit</Link>
                                 </div>

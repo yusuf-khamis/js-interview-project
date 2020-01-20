@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 
 import { updateUser } from '../../store/actions/users.actions';
 import { setUserUpdatingErrorAction } from '../../store/action-creators/users.action-creators';
-import { dateFormat } from '../../constants';
+
+let Validator = require("fastest-validator");
 
 class UserEdit extends Component {
 
@@ -13,11 +14,22 @@ class UserEdit extends Component {
 
         const { selectedUser } = props;
 
+        const val = new Validator();
+
+        const schema = {
+            name: { type: 'string', alpha: true, trim: true },
+            email: { type: 'email', normalize: true },
+            occupation: { type: 'string' },
+            bio: { type: 'string', trim: true }
+        };
+
+        this.check = val.compile(schema);
+
         this.state = {
             name: selectedUser.name,
             email: selectedUser.email,
             occupation: selectedUser.occupation,
-            bio: selectedUser.bio,
+            bio: selectedUser.bio
         };
 
         this.nameInputChange = this.nameInputChange.bind(this);
@@ -48,8 +60,18 @@ class UserEdit extends Component {
         this.setState({ bio: event.target.value });
     }
 
-    formSubmit() {
-        //
+    formSubmit(event) {
+        const stateClone = Object.assign({}, this.state);
+
+        if (Array.isArray(this.check(stateClone))) {
+            window.UIkit.notification({message: 'Please rectify your input(s) first!', status: 'danger'})
+
+            event.preventDefault();
+
+            return;
+        }
+
+        this.props.updateUser(this.props.selectedUser, stateClone);
     }
 
     render() {
@@ -68,7 +90,7 @@ class UserEdit extends Component {
                     </div>
 
                     <div className="uk-card-body">
-                        <form className="uk-form-stacked">
+                        <form onSubmit={this.formSubmit} className="uk-form-stacked">
                             <div className="uk-margin">
                                 <label className="uk-form-label">Name:</label>
                                 <input type="text" value={this.state.name} onChange={this.nameInputChange} className="uk-input" />
