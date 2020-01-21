@@ -1,8 +1,5 @@
-import * as moment from 'moment';
-
 import { initialUsersState } from "../states/users.state";
 import { UserActions } from "../action-creators/users.action-creators";
-import { dateFormat } from '../../constants';
 
 export default function usersReducer(state = initialUsersState, action) {
     switch (action.type) {
@@ -42,7 +39,7 @@ export default function usersReducer(state = initialUsersState, action) {
                         return {
                             ...user,
                             ...action.payload,
-                            updated_at: moment().format(dateFormat)
+                            updated_at: new Date()
                         };
                     }
 

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { updateUser } from '../../store/actions/users.actions';
-import { setUserUpdatingErrorAction } from '../../store/action-creators/users.action-creators';
+import { setUserUpdatingErrorAction, setUserUpdatingSuccessfulAction } from '../../store/action-creators/users.action-creators';
 
 let Validator = require("fastest-validator");
 
@@ -17,7 +17,7 @@ class UserEdit extends Component {
         const val = new Validator();
 
         const schema = {
-            name: { type: 'string', alpha: true, trim: true },
+            name: { type: 'string', trim: true },
             email: { type: 'email', normalize: true },
             occupation: { type: 'string' },
             bio: { type: 'string', trim: true }
@@ -40,8 +40,16 @@ class UserEdit extends Component {
     }
 
     componentWillUnmount() {
-        this.props.revertUpdateSuccessful();
-        this.props.revertUpdateFailed();
+        this.props.updateUserSuccessful(false);
+        this.props.updateUserError(false);
+
+        window.UIkit.modal(document.getElementById('modal-success')).hide();
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (!prevProps.userUpdatingSuccessful && this.props.userUpdatingSuccessful) {
+            window.UIkit.modal(document.getElementById('modal-success')).show();
+        }
     }
 
     nameInputChange(event) {
@@ -61,12 +69,16 @@ class UserEdit extends Component {
     }
 
     formSubmit(event) {
+        event.preventDefault();
+
+        this.props.updateUserSuccessful(false);
+        this.props.updateUserError(false);
+
         const stateClone = Object.assign({}, this.state);
 
         if (Array.isArray(this.check(stateClone))) {
+            console.warn(this.check(stateClone));
             window.UIkit.notification({message: 'Please rectify your input(s) first!', status: 'danger'})
-
-            event.preventDefault();
 
             return;
         }
@@ -75,7 +87,7 @@ class UserEdit extends Component {
     }
 
     render() {
-        const { selectedUser, userList } = this.props;
+        const { selectedUser, userList, userUpdatingError } = this.props;
 
         const occupationList = Array.from(new Set(userList.map(item => item.occupation))).map((item, index) => {
             return <option key={index} value={item}>{item}</option>
@@ -84,6 +96,14 @@ class UserEdit extends Component {
         return (
             <div>
                 <h2 className="uk-heading">Edit a user</h2>
+                {
+                    userUpdatingError &&
+                    (
+                        <div className="uk-alert-danger" uk-alert="">
+                            <p>Oops! An unexpected error occured while committing your updates, please try again after sometime.</p>
+                        </div>
+                    )
+                }
                 <div className="uk-card uk-card-default">
                     <div className="uk-card-header">
                         <h3>User with ID &lt;{selectedUser.id}&gt;</h3>
@@ -118,6 +138,17 @@ class UserEdit extends Component {
                         </form>
                     </div>
                 </div>
+
+                <div id="modal-success" uk-modal="esc-close: false; bg-close: false">
+                    <div className="uk-modal-dialog uk-modal-body">
+                        <h2 className="uk-modal-title">Success</h2>
+                        <p>User details were successfully updated!</p>
+                        <p className="uk-text-right">
+                            <button className="uk-button uk-button-default uk-modal-close" type="button">Edit Again</button>
+                            <Link to="/" className="uk-button uk-button-primary" type="button">Back</Link>
+                        </p>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -128,7 +159,8 @@ function mapStateToProps(state) {
     return {
         userList: state.users.userList,
         selectedUser: state.users.selectedUser,
-        userUpdatingError: state.users.userUpdatingError
+        userUpdatingError: state.users.userUpdatingError,
+        userUpdatingSuccessful: state.users.userUpdated
     };
 }
 
@@ -137,14 +169,11 @@ function mapDispatchToProps(dispatch) {
         updateUser(user, updates) {
             return dispatch(updateUser(user, updates));
         },
-        updateUserError() {
-            return dispatch(setUserUpdatingErrorAction(true));
+        updateUserError(err) {
+            return dispatch(setUserUpdatingErrorAction(err));
         },
-        revertUpdateSuccessful() {
-            //
-        },
-        revertUpdateFailed() {
-            //
+        updateUserSuccessful(done) {
+            return dispatch(setUserUpdatingSuccessfulAction(done));
         }
     };
 }

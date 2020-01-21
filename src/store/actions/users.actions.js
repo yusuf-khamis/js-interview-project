@@ -32,12 +32,12 @@ export function getUsers() {
 export function updateUser(user, updates) {
     return async dispatch => {
         try {
-            const res = await fetch(updateUsersUrl, {
+            const res = await fetch(updateUsersUrl.replace('{id}', user.id), {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(user)
+                body: JSON.stringify(updates)
             });
 
             if (res.status >= 400) {
