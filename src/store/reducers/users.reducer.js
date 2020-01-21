@@ -34,7 +34,7 @@ export default function usersReducer(state = initialUsersState, action) {
         case UserActions.UpdateUser: {
             return {
                 ...state,
-                users: state.users.map(user => {
+                userList: state.userList.map(user => {
                     if (user.id === action.user.id) {
                         return {
                             ...user,

@@ -29,7 +29,8 @@ class UserEdit extends Component {
             name: selectedUser.name,
             email: selectedUser.email,
             occupation: selectedUser.occupation,
-            bio: selectedUser.bio
+            bio: selectedUser.bio,
+            submitting: false
         };
 
         this.nameInputChange = this.nameInputChange.bind(this);
@@ -49,6 +50,12 @@ class UserEdit extends Component {
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (!prevProps.userUpdatingSuccessful && this.props.userUpdatingSuccessful) {
             window.UIkit.modal(document.getElementById('modal-success')).show();
+
+            this.setState({ submitting: false });
+        }
+        
+        if (!prevProps.userUpdatingError && this.props.userUpdatingError) {
+            this.setState({ submitting: false });
         }
     }
 
@@ -70,6 +77,8 @@ class UserEdit extends Component {
 
     formSubmit(event) {
         event.preventDefault();
+
+        this.setState({ submitting: true });
 
         this.props.updateUserSuccessful(false);
         this.props.updateUserError(false);
@@ -132,7 +141,7 @@ class UserEdit extends Component {
                             </div>
 
                             <div className="uk-margin">
-                                <button type="submit" className="uk-button uk-button-secondary uk-margin-right">Update</button>
+                                <button disabled={this.state.submitting} type="submit" className="uk-button uk-button-secondary uk-margin-right">Update</button>
                                 <Link to="/" className="uk-button uk-button-default uk-margin-left">Cancel</Link>
                             </div>
                         </form>

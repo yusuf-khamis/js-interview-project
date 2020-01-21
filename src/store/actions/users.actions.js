@@ -50,7 +50,8 @@ export function updateUser(user, updates) {
 
             dispatch(setSelectedUserAction({
                 ...user,
-                ...updates
+                ...updates,
+                updated_at: new Date()
             }));
         } catch (err) {
             dispatch(setUserUpdatingErrorAction(true));
